@@ -1,0 +1,14 @@
+SELECT  * FROM EMPLOYEES e 
+
+--fisrt_name, last_name, job_id 컬럼만 조회
+
+SELECT e.FIRST_NAME, e.LAST_NAME, e.JOB_ID FROM EMPLOYEES e 
+
+--EMPLOYEES에서 연봉이 12000 이상 되는 직원들의 LAST_NAME, SALARY조회
+SELECT e.LAST_NAME , e.SALARY 
+FROM EMPLOYEES e 
+WHERE e.SALARY 
+
+--사원번호가 176인 직원의 LAST_NAME,DEPARTMENT_ID조회
+
+--연봉이 5000에서 12000범위 이외인 사람들의 LAST_NAME,SALARY 조회
