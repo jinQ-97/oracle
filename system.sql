@@ -45,5 +45,89 @@ ORDER BY "SCHEMA" DESC
 -- 번호가 30번인 것만 조회
 SELECT	*
 FROM "LOGMNR_GT_TAB_INCLUDE$" lgti 
---WHERE	lgti.SPARE1 = 30
+WHERE	lgti.SPARE1 = 30
+
+SELECT *
+FROM "AQ$_QUEUE_TABLES" aqt 
+WHERE aqt.NAME = 'AQ' AND aqt.OBJNO =21000
+
+사원번호가 7499 이고 부서번호가 30인 사원 조회
+SELECT	*
+FROM EMP e
+WHERE e.EMPNO = 7499 AND e.DEPTNO = 30
+
+
+사원번호가 7499 이거나(OR) 부서번호가 30인 사원 조회
+SELECT	*
+FROM EMP e
+WHERE e.EMPNO = 7499 OR e.DEPTNO = 30
+
+
+--SAL(월급)일때 
+--연봉이 36000 인 사원의 전체 정보 조회
+SELECT * FROM EMP e WHERE e.SAL * 12 = 36000
+
+--월급여가 3000초과인 사원의 전체 정보 조회
+SELECT * FROM EMP e WHERE e.SAL > 3000
+
+--월급여가 2500이상이고 사원직책이 ANALYST인 사원정보 조회
+SELECT * FROM EMP e WHERE e.SAL >= 2500 AND e.JOB = 'ANALYST'
+
+--사원직책이 MANAGER, SALESMAN,CLERK 인 사원정보 조회
+SELECT * FROM EMP e WHERE e.JOB 'MANAGER'OR e.JOB 'SALESMAN' OR e.JOB 'CLERK' 
+
+
+--ename의 시작이 f 이후의 문자로 시작하는 사원정보 조회
+SELECT * FROM EMP e WHERE e.ENAME >= 'F'
+
+-- = 같다, != 같지않다
+SELECT * FROM EMP e WHERE e.SAL != 3000
+SELECT * FROM EMP e WHERE e.SAL <> 3000
+SELECT * FROM EMP e WHERE e.SAL ^= 3000
+
+-- IN (OR 여러개)
+SELECT * FROM EMP e WHERE e.JOB IN('MANAGER','SALESMAN','CLERK')
+
+--NOT IN 
+SELECT * FROM EMP e WHERE NOT IN ('MANAGER','SALESMAN','CLERK')
+
+--부서번호가 10이거나 20인 사원조회
+SELECT * FROM EMP e WHERE e.DEPTNO IN (10,20)
+
+--특정 범위 있는 값 추출할 때 사용 : BETWEEN A AND B
+--급여가 2000이상 3000이하인 사원 정보 조회
+SELECT *
+FROM EMP e
+WHERE E.SAL >=2000 AND e.SAL <=3000
+
+SELECT *
+FROM EMP e
+WHERE E.SAL BETWEEN 2000 AND 3000
+
+-- 2000이상 3000이하가 아닌
+SELECT *
+FROM EMP e
+WHERE E.SAL NOT BETWEEN 2000 AND 3000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
