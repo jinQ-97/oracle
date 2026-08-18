@@ -12,3 +12,207 @@ WHERE e.SALARY
 --사원번호가 176인 직원의 LAST_NAME,DEPARTMENT_ID조회
 
 --연봉이 5000에서 12000범위 이외인 사람들의 LAST_NAME,SALARY 조회
+
+---------------------------------------08/12---------------------------------------------
+
+--last_name에 u 가 포함된 사원들의 first_name, last_name, employee_id 조회
+SELECT e.FIRST_NAME, e.LAST_NAME, e.EMPLOYEE_ID  
+FROM EMPLOYEES e 
+WHERE e.LAST_NAME LIKE '%u%'
+
+--last_name 의 네번째 글자가 a 인 사원들의 employee_id,first_name, last_name 조회
+
+SELECT e.FIRST_NAME, e.LAST_NAME, e.EMPLOYEE_ID  
+FROM EMPLOYEES e 
+WHERE e.LAST_NAME LIKE '___a%'
+
+--last_name 에 a 혹은 e글자가 있는 사원들의 employee_id,first_name, last_name 조회
+
+SELECT e.FIRST_NAME, e.LAST_NAME, e.EMPLOYEE_ID  
+FROM EMPLOYEES e 
+WHERE e.LAST_NAME LIKE '%a%'OR e.LAST_NAME LIKE '%e%' 
+
+-- MANAGER_ID 가 없는 직원들의 last_name, job_id 조회
+SELECT e.LAST_NAME, e.JOB_ID  
+FROM EMPLOYEES e 
+WHERE e.MANAGER_ID IS NULL 
+
+-- ST_CLERK 인 직업 ID를 가진 사원이 없는 부서ID 조회 (단, 부서번호가 NULL인 경우 제외)
+SELECT DISTINCT e.DEPARTMENT_ID 
+--SELECT e.DEPARTMENT_ID  
+FROM EMPLOYEES e 
+WHERE e.JOB_ID NOT IN ('ST_CLERK') AND e.DEPARTMENT_ID IS NOT NULL 
+
+--COMISSION_PCT가 NULL이 아닌 사원들 중에서 COMMISIION=SALARY*COMMISION_PCT를 구한 후 FIRST_NAME, EMPLOY_ID, JOB_ID 조회
+SELECT e.FIRST_NAME, e.JOB_ID, e.EMPLOYEE_ID, SALARY*COMMISSION_PCT AS COMMISSION  
+FROM EMPLOYEES e 
+WHERE e.COMMISSION_PCT IS NOT NULL  
+
+--연습문제
+--1. 사원명이 S로 끝나는 사원 데이터 조회
+
+SELECT *  
+FROM EMPLOYEES e 
+WHERE e.LAST_NAME LIKE '%S'
+
+--2. 30번 부서에서 근무하고 있는 사원 중에서 JOB이 SALESMAN인 사원의 사원번호, 이름, 직책, 급여, 부서번호 조회
+SELECT e.LAST_NAME,e.EMPLOYEE_ID ,e.JOB_ID , e.DEPARTMENT_ID, e.SALARY 
+FROM EMPLOYEES e
+WHERE e.DEPARTMENT_ID = 30 AND e.JOB_ID ='SALESMAN' 
+
+
+
+--3. 20번 30번 부서에 근무하고 있는 사원 중 급여가 2000 초과인 사원을 다음 두가지 방식의
+-- SELECT 문을 사용하여 사원번호, 이름.직책,급여,부서번호를 출력
+-- 집합연산자를 사용하지 않는 방식
+-- 집합연산자를 사용하는 방식
+SELECT e.LAST_NAME,e.EMPLOYEE_ID ,e.JOB_ID , e.DEPARTMENT_ID, e.SALARY 
+FROM EMPLOYEES e
+WHERE e.DEPARTMENT_ID IN (20,30) AND e.SALARY  > 2000 
+---------------------------------------------------------------
+
+SELECT e.LAST_NAME, e.EMPLOYEE_ID ,e.JOB_ID , e.DEPARTMENT_ID, e.SALARY 
+FROM EMPLOYEES e WHERE e.SALARY  > 2000 
+MINUS
+SELECT e.LAST_NAME,e.EMPLOYEE_ID ,e.JOB_ID , e.DEPARTMENT_ID, e.SALARY 
+FROM EMPLOYEES e WHERE e.DEPARTMENT_ID = 10
+
+
+--4. NOT BETWEEN A AND B 연산자를 사용하지 않고 급여 열이 2000이상 3000이하 범위 이외의 값을 가진 데이터만 출력
+SELECT * FROM EMPLOYEES e WHERE e.SALARY  < 2000 OR e.SALARY  > 3000
+
+--5. 사원 이름에 E 가 포함된 30번 부서의 사원 중 급여가 1000~2000 사이가 아닌 사원이름,사원번호.급여,부서번호 출력
+SELECT e.LAST_NAME,e.EMPLOYEE_ID ,e.JOB_ID , e.DEPARTMENT_ID, e.SALARY 
+FROM EMPLOYEES e WHERE e.LAST_NAME  LIKE '%E%' AND e.DEPARTMENT_ID = 30 
+AND e.SALARY NOT BETWEEN 1000 AND 2000
+
+--6. 추가수장이 존재하지 않고 상급자가 있으며, 직책이 MANAGER, CLERK 인 사원 중에서 
+--사원 이름이 두번째 글자가 L 이 아닌 사원의 정보출력
+ 
+SELECT * FROM EMPLOYEES e WHERE e.COMMISSION_PCT IS NULL AND e.MANAGER_ID IS NOT NULL AND 
+e.JOB_ID IN ('MANAGER','CLERK') AND e.LAST_NAME NOT LIKE 'L%' 
+
+--문자열 함수
+--FIRST_NAME 이 CURTIS인 사람의 FIRST_NAME,LAST_NAME,EMAIL,PHONE_NUMBER,JOB_ID 조회. 단, JOB_ID의 결과는 소문자로 출력
+SELECT e.FIRST_NAME, e.LAST_NAME, e.PHONE_NUMBER, e.EMAIL, LOWER(e.JOB_ID)   
+FROM EMPLOYEES e
+WHERE UPPER(e.FIRST_NAME) = 'CURTIS'  
+
+--부서번호가 60,70,80,90 인 사람들의 EMPLOYEE_ID, FIRST_NAME, HIRE_DATE, JOB_ID를 조회. 단, job_id가 IT_PROG인 사원의 경우 '프로그래머'로 변경후 출력
+SELECT e.FIRST_NAME, e.EMPLOYEE_ID , e.HIRE_DATE, REPLACE(e.JOB_ID,'IT_PROG','프로그래머')   
+FROM EMPLOYEES e
+WHERE e.DEPARTMENT_ID IN (60,70,80,90) 
+
+
+--JOB_ID가 AD_PRES, PU_CLERK 인 사원들의 EMPLOYEE_ID, FIRST_NAME, DEPARTMENT_ID, JOB_ID를 조회. 단, 사원명은 FIRST_NAME, LAST_NAME을 연결하여 출력(사이에 공백포함)
+SELECT e.FIRST_NAME||' '|| e.LAST_NAME ,e.EMPLOYEE_ID ,e.DEPARTMENT_ID  , e.JOB_ID   
+FROM EMPLOYEES e
+WHERE e.JOB_ID IN ('AD_PRES','PU_CLERK')
+
+
+-- 회사 내의 최대연봉 및 최소연봉 차이를 조회 (SAL_GAP)
+SELECT MAX(e.SALARY) - MIN(e.SALARY ) AS SAL_GAP FROM EMPLOYEES e
+
+-- 매니저로 근무하는 사원들의 총 수 조회(중복제거)
+SELECT COUNT(DISTINCT e.MANAGER_ID) AS "매니저수" FROM  EMPLOYEES e 
+
+--결과값을 원하는 열로 묶어 출력 : group by
+
+-- 자신의 담당 매니저의 입사일보다 빠른 입사자 찾기 (SELF JOIN)
+SELECT e.EMPLOYEE_ID AS 사번 , e.FIRST_NAME AS 이름, e.MANAGER_ID AS 매니저아이디, E.HIRE_DATE AS 내입사일, E2.FIRST_NAME AS 매니저명, e2.HIRE_DATE AS 매니저입사일 
+FROM EMPLOYEES e JOIN EMPLOYEES e2 
+ON e.MANAGER_ID = e2.EMPLOYEE_ID 
+WHERE e2.HIRE_DATE > e.HIRE_DATE 
+
+-- 위치 아이디가 1700인 사원들의 LAST_NAME, DEPARTMENT_ID, SALARY 조회
+SELECT e.LAST_NAME, e.SALARY, d.DEPARTMENT_ID  
+FROM EMPLOYEES e JOIN DEPARTMENTS d 
+ON d.DEPARTMENT_ID = e.DEPARTMENT_ID
+WHERE d.LOCATION_ID = 1700
+
+-- EXECUTIVE 부서에 근무하는 모든 사원들의 부서번호, LAST_NAME, DEPARTMENT_ID, SALARY, JOB_ID 조회
+SELECT d.DEPARTMENT_ID , e.LAST_NAME, e.SALARY ,e.JOB_ID 
+FROM EMPLOYEES e JOIN DEPARTMENTS d 
+ON d.DEPARTMENT_ID = e.DEPARTMENT_ID
+WHERE d.DEPARTMENT_NAME = 'Executive' 
+
+
+-- 각 사원별 소속부서에서 자신보다 늦게 고용되었으나 더 많은 연봉을 바든 사원이 존재. 사번,이름(F+L)
+SELECT DISTINCT e.EMPLOYEE_ID , e.FIRST_NAME ||''|| E.LAST_NAME 
+FROM EMPLOYEES e JOIN EMPLOYEES e2 
+ON e.EMPLOYEE_ID = e2.EMPLOYEE_ID 
+WHERE e.HIRE_DATE < e2.HIRE_DATE AND e.SALARY < e2.SALARY 
+
+
+-- 도시 이름이 T로 시작하는 사원들의 사번, LAST_NAME, 부서 번호 조회
+-- 테이블 다중연결(3개)
+SELECT E.EMPLOYEE_ID, E.LAST_NAME, D.DEPARTMENT_ID,L.CITY   
+FROM DEPARTMENTS d JOIN EMPLOYEES e  ON d.DEPARTMENT_ID  = E.DEPARTMENT_ID JOIN LOCATIONS l ON D.LOCATION_ID  = L.LOCATION_ID 
+WHERE L.CITY LIKE 'T%'
+
+---------------------------------------------------------------------------------------8/14-------------------------------------------------------------------------------------------
+
+--서브쿼리
+--JOB_ID 가 'SA_MAN'인 사원들의 최대 연봉보다 높게 받는 사원들의 정보 조회 (사원번호,LAST_NAME,JOB_ID,SALARY 조회)
+
+SELECT e.EMPLOYEE_ID , E.LAST_NAME, E.JOB_ID, E.SALARY 
+FROM EMPLOYEES e
+WHERE E.SALARY  > (SELECT MAX(E2.SALARY) FROM EMPLOYEES e2 WHERE E2.JOB = 'SA_MAN')
+
+--커미션을 받는 사원들의 부서와 연봉이 동일한 사원들의 정보 조회 (사원번호,LAST_NAME,JOB_ID,SALARY 조회,부서번호)
+
+SELECT e.EMPLOYEE_ID , E.LAST_NAME, E.JOB_ID, E.SALARY
+FROM EMPLOYEES e
+WHERE (e.DEPARTMENT_ID ,E.SALARY)  IN (SELECT e2.DEPARTMENT_ID,e2.SALARY  FROM EMPLOYEES e2 WHERE e2.COMMISSION_PCT )
+
+--FROM절 서브쿼리
+--회사 전체 평균 연봉보다 더 받는 사원들 중 LAST_NAME에 U가 들어있는 사원들이 근무하는 부서에서 커미션을 받는 사원들의 부서와 연봉이 동일한 사원들의 정보 조회 (사원번호,LAST_NAME,JOB_ID,SALARY 조회)
+
+SELECT e.EMPLOYEE_ID , E.LAST_NAME, E.JOB_ID, E.SALARY
+FROM EMPLOYEES e ,(SELECT DISTINCT E2.DEPARTMENT_ID  FROM EMPLOYEES e2 WHERE E2.SALARY > (SELECT ROUND(AVG(E3.SALARY)) FROM EMPLOYEES e3 ) AND E2.LAST_NAME LIKE '%U%') DEPT WHERE E.DEPARTMENT_ID = DEPT.DEPARTMENT_ID 
+
+--위치 ID가 1700인 사원들의 급여,커미션 추출 후 추출된 사원들의 급여와 커미션이 동일한 사원 정보 조회 (사원번호,FIRST_NAME + LAST_NAME,부서번호,SALARY 조회)
+
+SELECT E.EMPLOYEE_ID, e.FIRST_NAME ||''|| E.LAST_NAME ,e.DEPARTMENT_ID, e.SALARY 
+FROM EMPLOYEES e 
+WHERE (e.SALARY, NVL(E.COMMISSION_PCT,0)) IN (SELECT E2.SALARY,NVL(E2.COMMISSION_PCT,0) FROM EMPLOYEES e2 JOIN DEPARTMENTS d ON e2.DEPARTMENT_ID = d.DEPARTMENT_ID WHERE D.LOCATION_ID = 1700) 
+
+--SELECT절 (스칼라) 서브쿼리 사용
+--총 사원수 및 각 년도별로 고용된 사원들의 총 숫자 조회 (총 사원수 2011입사자 2012입사자)
+
+SELECT DISTINCT(SELECT COUNT(*) FROM EMPLOYEES e) AS 총 사원 수 , 
+(SELECT COUNT(*) FROM EMPLOYEES e WHERE TO_CHAR(E.HIRE_DATE ,'YYYY')='2011' ) AS 2011 입사자,
+(SELECT COUNT(*) FROM EMPLOYEES e WHERE TO_CHAR(E.HIRE_DATE ,'YYYY')='2012' ) AS 2012 입사자,	
+(SELECT COUNT(*) FROM EMPLOYEES e WHERE TO_CHAR(E.HIRE_DATE ,'YYYY')='2013' ) AS 2013 입사자,														
+(SELECT COUNT(*) FROM EMPLOYEES e WHERE TO_CHAR(E.HIRE_DATE ,'YYYY')='2014' ) AS 2014 입사자
+FROM EMPLOYEES e 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
